@@ -1,0 +1,25 @@
+{
+  "name": "travel_blog",
+  "version": "1.0.0",
+  "description": "Full stack travel blog using HTML, CSS, JS and MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annemariepeek/Travel_Blog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/annemariepeek/Travel_Blog/issues"
+  },
+  "homepage": "https://github.com/annemariepeek/Travel_Blog#readme",
+  "dependencies": {
+    "express-fileupload": "^1.4.0",
+    "express.js": "^1.0.0",
+    "nodemon": "^2.0.20"
+  }
+}
