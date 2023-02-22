@@ -4,9 +4,9 @@
   "description": "Full stack travel blog using HTML, CSS, JS and MongoDB",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
-  },
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+ },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/annemariepeek/Travel_Blog.git"
