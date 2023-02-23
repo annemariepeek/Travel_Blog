@@ -1,3 +1,17 @@
+
+// import { connectToCluster } from './database';
+// MONGO_DB_USERNAME = "annemariepeek"
+// MONGO_DB_PASSWORD = "dRlpnXen5ycGIgWI"
+// MONGO_DB_NAME = "TRAVEL_BLOG"
+// MONGO_COLLECTION = "blog_posts"
+// API_KEY = "AIzaSyBt6PrdLoAGpNvHozhtuhrHyvQrmYfppMs"
+
+// // const DB_URI = `mongodb+srv:\/\/annemariepeek:dRlpnXen5ycGIgWI@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majorit/`;
+
+// const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
+// const mongoClient = new MongoClient(`mongodb+srv:\/\/annemariepeek:dRlpnXen5ycGIgWI@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majorit/`, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+
 const blogTitleField = document.querySelector('.title');
 const articleField = document.querySelector('.article');
 const author = document.querySelector('.author')
@@ -20,6 +34,8 @@ if (uploadInput) {
     })
 }
 
+// const mongoClient = global.mongoClient
+// const db = global.db
 
 const uploadImage = (uploadFile, uploadType) => {
     const [file] = uploadFile.files;
@@ -109,17 +125,25 @@ publishBtn.addEventListener('click', () => {
 
         async function addPostToDB() {
             try {
-                await client.connect();
+                await mongoClient.connect();
                
-                await addBlogPost(client, db, blog_post);
+                await addBlogPost(mongoClient, db, blog_post);
         
             } catch (e) {
                 console.error(e);
             } finally {
-                await client.close();
+                await mongoClient.close();
             }
         }
-        addPostToDB().catch(console.error);
+        addPostToDB()
+        .then(() => {
+            location.href = `/${docName}`;
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
+        response.sendFile(path.join(initial_path, "uploads/home.html"))
 
 
         // db.collection("blogs").doc(docName).set()
@@ -162,6 +186,6 @@ function initMap() {
     })
 };
 
-async function addConvertion(client, db, new_post) {
-    await client.db(db.db).collection(db.collection).insertOne(new_post);
+async function addBlogPost(mongoClient, db, new_post) {
+    await mongoClient.db(db.db).collection(db.collection).insertOne(new_post);
 }

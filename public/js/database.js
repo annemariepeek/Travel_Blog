@@ -1,17 +1,22 @@
+import { config } from 'dotenv';
+config();
+console.log(process.env.DB_URI);
 
-// // require("dotenv").config({ path: path.resolve(__dirname, 'credentialsDontPost/.env') }) 
-
-// // const userName = process.env.MONGO_DB_USERNAME;
-// // const password = process.env.MONGO_DB_PASSWORD;
-
-// const userName = "annemariepeek"
-// const dbName = "TRAVEL_BLOG"
-// const password = "dRlpnXen5ycGIgWI"
-// const collection = "blog_posts"
+const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
 
 
-// const db = {db: dbName, collection: collection};
-// import { MongoClient, ServerApiVersion } = require('mongodb');
-// // const { rawListeners } = require("process");
-// const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
-// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+export async function connectToCluster(uri) {
+    let mongoClient;
+ 
+    try {
+        mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+        console.log('Connecting to MongoDB Atlas cluster...');
+        
+        console.log('Successfully connected to MongoDB Atlas!');
+ 
+        return mongoClient;
+    } catch (error) {
+        console.error('Connection to MongoDB Atlas failed!', error);
+        process.exit();
+    }
+ }
