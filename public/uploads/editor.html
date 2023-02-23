@@ -9,13 +9,6 @@
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/editor.css">
 
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt6PrdLoAGpNvHozhtuhrHyvQrmYfppMs&libraries=places&callback=initMap" async defer>
-    </script>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBt6PrdLoAGpNvHozhtuhrHyvQrmYfppMs"></script>  -->
-    <script src="../js/editor.js" type="text/javascript"></script>
-    <!-- <script src="../js/database.js"></script> -->
-
 </head>
 <body>
     <nav class="navbar">
@@ -53,15 +46,19 @@
             Cost: <input type="range" class="cost" min="1" max="10"> <br>
             Accessibility: <input type="range" class="accessibility" min="1" max="10"> <br>
         </div>
-        
+        <textarea type="text" class="author"  placeholder="Author"></textarea>
         <textarea type="text" class="article" placeholder="Start writing here..."></textarea>
     </div>
 
     <div class="blog-options">
         <button class="btn dark publish-btn">publish</button>
-        <input type="file" accept="image/*" id="image-upload" hidden>
+        <input type="file" accept="image/*" class="image-upload" hidden>
         <label for="image-upload" class="btn grey upload-btn">Upload Image</label>
     </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt6PrdLoAGpNvHozhtuhrHyvQrmYfppMs&libraries=places&callback=initMap" async defer></script>
+    <script type="module" src="../js/database.js" type="text/javascript"></script>
+    <script type="module" src="../js/editor.js" type="text/javascript"></script>
 
 </body>
 </html>

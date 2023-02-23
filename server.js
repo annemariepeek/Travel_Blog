@@ -2,12 +2,9 @@ const http = require("http");
 const express = require('express')
 const path = require('path')
 const bodyParser = require("body-parser");
+const fileupload = require('express-fileupload');
 process.stdin.setEncoding("utf8");
 
-
-const userName = process.env.MONGO_DB_USERNAME;
-const password = process.env.MONGO_DB_PASSWORD;
-const apikey = process.env.API_KEY;
 
 // require("dotenv").config({ path: path.resolve(__dirname, 'credentialsDontPost/.env') }) 
 // const databaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
@@ -15,19 +12,40 @@ const apikey = process.env.API_KEY;
 // const { rawListeners } = require("process");
 // const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
 
-let inital_path = path.join(__dirname, "public")
+let initial_path = path.join(__dirname, "public");
 
 const app = express()
-app.use(express.static(inital_path))
+app.use(express.static(initial_path));
+app.use(fileupload());
 
 app.get('/', (request, response) => {
-    response.sendFile(path.join(inital_path, "uploads/home.html"))
+    response.sendFile(path.join(initial_path, "uploads/home.html"))
 })
 
 app.get('/editor', (request, response) => {
-    response.sendFile(path.join(inital_path, "uploads/editor.html"))
+    response.sendFile(path.join(initial_path, "uploads/editor.html"))
 })
 
 app.listen("5001", () => {
     console.log('listening.....')
+})
+
+// upload link
+app.post('/upload', (req, res) => {
+    let file = req.files.image;
+    let date = new Date();
+    // image name
+    let imagename = date.getDate() + date.getTime() + file.name;
+    // image upload path
+    let path = 'public/uploads/' + imagename;
+
+    // create upload
+    file.mv(path, (err, result) => {
+        if(err){
+            throw err;
+        } else{
+            // our image upload path
+            res.json(`uploads/${imagename}`)
+        }
+    })
 })
