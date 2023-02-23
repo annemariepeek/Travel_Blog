@@ -13,9 +13,12 @@ bannerImage.addEventListener('change', () => {
     uploadImage(bannerImage, "banner");
 })
 
-// uploadInput.addEventListener('change', () => {
-//     uploadImage(uploadInput, "image");
-// })
+if (uploadInput) {
+    uploadInput.addEventListener('change', () => {
+        uploadImage(uploadInput, "image");
+    })
+}
+
 
 const uploadImage = (uploadFile, uploadType) => {
     const [file] = uploadFile.files;
