@@ -1,5 +1,6 @@
 const blogTitleField = document.querySelector('.title');
-const articleFeild = document.querySelector('.article');
+const articleField = document.querySelector('.article');
+const author = document.querySelector('.author')
 
 // banner
 const bannerImage = document.querySelector('#banner-upload');
@@ -51,38 +52,8 @@ const addImage = (imagepath, alt) => {
 
 let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-publishBtn.addEventListener('click', () => {
-    if(articleFeild.value.length && blogTitleField.value.length){
-        // generating id
-        let letters = 'abcdefghijklmnopqrstuvwxyz';
-        let blogTitle = blogTitleField.value.split(" ").join("-");
-        let id = '';
-        for(let i = 0; i < 4; i++){
-            id += letters[Math.floor(Math.random() * letters.length)];
-        }
-
-        // setting up docName
-        let docName = `${blogTitle}-${id}`;
-        let date = new Date(); // for published at info
-
-        //access firstore with db variable;
-        db.collection("blogs").doc(docName).set({
-            title: blogTitleField.value,
-            article: articleFeild.value,
-            bannerImage: bannerPath,
-            publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
-        })
-        .then(() => {
-            location.href = `/${docName}`;
-        })
-        .catch((err) => {
-            console.error(err);
-        })
-    }
-})
-
 // publishBtn.addEventListener('click', () => {
-//     if(articleField.value.length && blogTitleField.value.length){
+//     if(articleFeild.value.length && blogTitleField.value.length){
 //         // generating id
 //         let letters = 'abcdefghijklmnopqrstuvwxyz';
 //         let blogTitle = blogTitleField.value.split(" ").join("-");
@@ -95,32 +66,13 @@ publishBtn.addEventListener('click', () => {
 //         let docName = `${blogTitle}-${id}`;
 //         let date = new Date(); // for published at info
 
-//         //access MongoDB with db variable;
-//         // const blog_post = {
-//         //     title: blogTitleField.value,
-//         //     article: articleField.value,
-//         //     author: author.value,
-//         //     bannerImage: bannerPath,
-//         //     publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
-//         //     comments: {}
-//         // }
-
-//         // async function addPostToDB() {
-//         //     try {
-//         //         await client.connect();
-               
-//         //         await addBlogPost(client, db, blog_post);
-        
-//         //     } catch (e) {
-//         //         console.error(e);
-//         //     } finally {
-//         //         await client.close();
-//         //     }
-//         // }
-//         // addPostToDB().catch(console.error);
-
-
-//         db.collection("blogs").doc(docName).set()
+//         //access firstore with db variable;
+//         db.collection("blogs").doc(docName).set({
+//             title: blogTitleField.value,
+//             article: articleFeild.value,
+//             bannerImage: bannerPath,
+//             publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
+//         })
 //         .then(() => {
 //             location.href = `/${docName}`;
 //         })
@@ -130,7 +82,57 @@ publishBtn.addEventListener('click', () => {
 //     }
 // })
 
+publishBtn.addEventListener('click', () => {
+    if(articleField.value.length && blogTitleField.value.length){
+        // generating id
+        let letters = 'abcdefghijklmnopqrstuvwxyz';
+        let blogTitle = blogTitleField.value.split(" ").join("-");
+        let id = '';
+        for(let i = 0; i < 4; i++){
+            id += letters[Math.floor(Math.random() * letters.length)];
+        }
 
+        // setting up docName
+        let docName = `${blogTitle}-${id}`;
+        let date = new Date(); // for published at info
+
+        // access MongoDB with db variable;
+        const blog_post = {
+            docName: docName,
+            title: blogTitleField.value,
+            article: articleField.value,
+            author: author.value,
+            bannerImage: bannerPath,
+            publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
+            comments: {}
+        }
+
+        async function addPostToDB() {
+            try {
+                await client.connect();
+               
+                await addBlogPost(client, db, blog_post);
+        
+            } catch (e) {
+                console.error(e);
+            } finally {
+                await client.close();
+            }
+        }
+        addPostToDB().catch(console.error);
+
+
+        // db.collection("blogs").doc(docName).set()
+        // .then(() => {
+        //     location.href = `/${docName}`;
+        // })
+        // .catch((err) => {
+        //     console.error(err);
+        // })
+    }
+})
+
+//Place autocomplete
 function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -33.8688, lng: 151.2195},
@@ -157,26 +159,9 @@ function initMap() {
         infowindow.close();
         marker.setVisible(false);
         var place = autocomplete.getPlace();
-        // if (!place.geometry) {
-        //     window.alert("Autocomplete's returned place contains no geometry");
-        //     return;
-        // }
-
-        // // If the place has a geometry, then present it on a map.
-        // if (place.geometry.viewport) {
-        //     map.fitBounds(place.geometry.viewport);
-        // } else {
-        //     map.setCenter(place.geometry.location);
-        //     map.setZoom(17);
-        // }
-        // marker.setIcon(({
-        //     url: place.icon,
-        //     size: new google.maps.Size(71, 71),
-        //     origin: new google.maps.Point(0, 0),
-        //     anchor: new google.maps.Point(17, 34),
-        //     scaledSize: new google.maps.Size(35, 35)
-        // }));
-        // marker.setPosition(place.geometry.location);
-        // marker.setVisible(true);
     })
 };
+
+async function addConvertion(client, db, new_post) {
+    await client.db(db.db).collection(db.collection).insertOne(new_post);
+}
