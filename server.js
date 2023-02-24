@@ -3,24 +3,19 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require("body-parser");
 const fileupload = require('express-fileupload');
+
+// import * as path from 'path';
+// import * as express from 'express';
+// import * as fileupload from 'express-fileupload';
+
+// import { fileURLToPath } from 'url';
+
+// const __filename = fileURLToPath(import.meta.url);
+
+// const __dirname = path.dirname(__filename);
+
+
 process.stdin.setEncoding("utf8");
-
-const userName = "annemariepeek"
-const dbName = "TRAVEL_BLOG"
-const password = "dRlpnXen5ycGIgWI"
-const collection = "blog_posts"
-
-const db = {db: dbName, collection: collection};
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const { rawListeners } = require("process");
-const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
-// require("dotenv").config({ path: path.resolve(__dirname, 'credentialsDontPost/.env') }) 
-// const databaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
-// const { MongoClient, ServerApiVersion } = require('mongodb');
-// const { rawListeners } = require("process");
-// const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
 
 let initial_path = path.join(__dirname, "public");
 
@@ -37,7 +32,7 @@ app.get('/editor', (request, response) => {
     response.sendFile(path.join(initial_path, "uploads/editor.html"))
 })
 
-app.listen("5001", () => {
+app.listen("3000", () => {
     console.log('listening.....')
 })
 

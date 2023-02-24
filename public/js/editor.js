@@ -1,17 +1,4 @@
-
-// import { connectToCluster } from './database';
-// MONGO_DB_USERNAME = "annemariepeek"
-// MONGO_DB_PASSWORD = "dRlpnXen5ycGIgWI"
-// MONGO_DB_NAME = "TRAVEL_BLOG"
-// MONGO_COLLECTION = "blog_posts"
-// API_KEY = "AIzaSyBt6PrdLoAGpNvHozhtuhrHyvQrmYfppMs"
-
-// // const DB_URI = `mongodb+srv:\/\/annemariepeek:dRlpnXen5ycGIgWI@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majorit/`;
-
-// const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
-// const mongoClient = new MongoClient(`mongodb+srv:\/\/annemariepeek:dRlpnXen5ycGIgWI@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majorit/`, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
-
+// import { db } from './database.js';
 const blogTitleField = document.querySelector('.title');
 const articleField = document.querySelector('.article');
 const author = document.querySelector('.author')
@@ -33,9 +20,6 @@ if (uploadInput) {
         uploadImage(uploadInput, "image");
     })
 }
-
-// const mongoClient = global.mongoClient
-// const db = global.db
 
 const uploadImage = (uploadFile, uploadType) => {
     const [file] = uploadFile.files;
@@ -61,42 +45,12 @@ const uploadImage = (uploadFile, uploadType) => {
 }
 
 const addImage = (imagepath, alt) => {
-    let curPos = articleFeild.selectionStart;
+    let curPos = articleField.selectionStart;
     let textToInsert = `\r![${alt}](${imagepath})\r`;
-    articleFeild.value = articleFeild.value.slice(0, curPos) + textToInsert + articleFeild.value.slice(curPos);
+    articleField.value = articleField.value.slice(0, curPos) + textToInsert + articleField.value.slice(curPos);
 }
 
 let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-// publishBtn.addEventListener('click', () => {
-//     if(articleFeild.value.length && blogTitleField.value.length){
-//         // generating id
-//         let letters = 'abcdefghijklmnopqrstuvwxyz';
-//         let blogTitle = blogTitleField.value.split(" ").join("-");
-//         let id = '';
-//         for(let i = 0; i < 4; i++){
-//             id += letters[Math.floor(Math.random() * letters.length)];
-//         }
-
-//         // setting up docName
-//         let docName = `${blogTitle}-${id}`;
-//         let date = new Date(); // for published at info
-
-//         //access firstore with db variable;
-//         db.collection("blogs").doc(docName).set({
-//             title: blogTitleField.value,
-//             article: articleFeild.value,
-//             bannerImage: bannerPath,
-//             publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
-//         })
-//         .then(() => {
-//             location.href = `/${docName}`;
-//         })
-//         .catch((err) => {
-//             console.error(err);
-//         })
-//     }
-// })
 
 publishBtn.addEventListener('click', () => {
     if(articleField.value.length && blogTitleField.value.length){
@@ -111,8 +65,7 @@ publishBtn.addEventListener('click', () => {
         // setting up docName
         let docName = `${blogTitle}-${id}`;
         let date = new Date(); // for published at info
-
-        // access MongoDB with db variable;
+        
         const blog_post = {
             docName: docName,
             title: blogTitleField.value,
@@ -123,38 +76,24 @@ publishBtn.addEventListener('click', () => {
             comments: {}
         }
 
-        async function addPostToDB() {
-            try {
-                await mongoClient.connect();
-               
-                await addBlogPost(mongoClient, db, blog_post);
-        
-            } catch (e) {
-                console.error(e);
-            } finally {
-                await mongoClient.close();
-            }
-        }
-        addPostToDB()
+
+        //access firstore with db variable;
+        // db.collection("blogs").doc(docName).set({
+        //     title: blogTitleField.value,
+        //     article: articleField.value,
+        //     bannerImage: bannerPath,
+        //     publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
+        // })
+        db.collection("blog").doc(docName).set(blog_post)
         .then(() => {
             location.href = `/${docName}`;
         })
         .catch((err) => {
             console.error(err);
-        });
-
-        response.sendFile(path.join(initial_path, "uploads/home.html"))
-
-
-        // db.collection("blogs").doc(docName).set()
-        // .then(() => {
-        //     location.href = `/${docName}`;
-        // })
-        // .catch((err) => {
-        //     console.error(err);
-        // })
+        })
     }
 })
+
 
 //Place autocomplete
 function initMap() {
@@ -185,7 +124,3 @@ function initMap() {
         var place = autocomplete.getPlace();
     })
 };
-
-async function addBlogPost(mongoClient, db, new_post) {
-    await mongoClient.db(db.db).collection(db.collection).insertOne(new_post);
-}
