@@ -74,9 +74,9 @@ app.get('/upload', (req, res) => {
     // res.sendFile(path.join(initial_path, "uploads/editor.html"))
 })
 
-app.get('/blog', (req, res) => {
-    res.render("blog")
-})
+// app.get('/blog', (req, res) => {
+//     res.render("blog")
+// })
 
 app.listen("3000", () => {
     console.log('listening.....')
@@ -118,7 +118,7 @@ app.post('/upload', (req, res) => {
         author: author,
         bannerImage: banner_path,
         publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
-        comments: {}
+        comments: []
     }
     console.log(blog_post)
 
@@ -135,7 +135,7 @@ app.post('/upload', (req, res) => {
             await client.close();
         }
     }
-    // addBlogPostToDB().catch(console.error);
+    addBlogPostToDB().catch(console.error);
     res.render("blog", blog_post)
 
 })
@@ -149,14 +149,100 @@ app.get("/blog/:blogId", (req, res) => {
         article: article,
         author: author,
         bannerImage: banner_path,
-        publishedAt: publishedAT,
-        comments: {}
+        publishedAt: publishedAt,
+        comments: comments
     } = getBlogById(blogId)
 
+    const formated_comments = format_comments(comments)
 
+    const blog_post = {
+        docName: docName,
+        title: title,
+        article: article,
+        author: author,
+        bannerImage: banner_path,
+        publishedAt: publishedAt,
+        comments: formated_comments
+    }
+    res.render("blog", blog_post)
+})
 
-    res.sendFile(path.join(initial_path, "uploads/blog.html"))
+app.post("/post_comment", (req, res) => {
+    const {
+        comment_author, email, comment, blogId
+    } = req.body
 
+    const date = new Date()
+    const new_comment = {
+        comment_author: comment_author,
+        // publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`, 
+        email: email, 
+        comment: comment
+    }
+
+    async function addComment() {
+        try {
+            await client.connect();
+                    
+            const result = await client.db(db.db)
+                                .collection(db.collection)
+                                .updateOne(
+                                    { docName: blogId },
+                                    { $push: new_comment }
+                                )
+        
+           if (result) {
+               return result;
+           } else {
+               console.log(`error in add comment`);
+           }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await client.close();
+        }
+    }
+    addComment().catch(console.error);
+
+    const post = getBlogById(blogId)
+    console.log(post)
+
+    const {
+        docName: docName,
+        title: title,
+        country: country,
+        place: place,
+        food_rating: food_rating,
+        saftey_rating: saftey_rating,
+        cost_rating: cost_rating,
+        accessibility_rating: accessibility_rating,
+        average_rating: average,
+        article: article,
+        author: author,
+        bannerImage: banner_path,
+        publishedAt: publishedAt,
+        comments: comments
+    } = getBlogById(blogId)
+
+    const formatted_comments = format_comments(comments)
+
+    const blog_post = {
+        docName: docName,
+        title: title,
+        country: country,
+        place: place,
+        food_rating: food_rating,
+        saftey_rating: saftey_rating,
+        cost_rating: cost_rating,
+        accessibility_rating: accessibility_rating,
+        average_rating: average,
+        article: article,
+        author: author,
+        bannerImage: banner_path,
+        publishedAt: publishedAt,
+        comments: formatted_comments
+    }
+    res.render("blog", blog_post)
 })
 
 app.post("/upload_image", (req, res) => {
@@ -187,14 +273,14 @@ async function getBlogById(blogId) {
             await client.connect();
                     
             let filter = { docName: blogId };
-            const result = await client.db(databaseAndCollection.db)
-                                .collection(databaseAndCollection.collection)
+            const result = await client.db(db.db)
+                                .collection(db.collection)
                                 .findOne(filter);
         
            if (result) {
                return result;
            } else {
-               console.log(`No email found with name ${email}`);
+               console.log(`error in get blog by id}`);
            }
                     
         } catch (e) {
@@ -207,4 +293,22 @@ async function getBlogById(blogId) {
 
 }
 
-// new approach 
+
+async function format_comments(comments) {
+    // c = ``
+    
+    // if (comments.length === 0) { c += `Be the first to leave a comment.`}
+    
+    // comments.forEach((c) => {
+    //     const {
+    //         comment_author, comment, publishedAt
+    //     } = c
+    //     c += `<div class="single_comment">
+    //         <h4> ${comment_author} </h4><h6> ${publishedAt} </h6><br>
+    //         ${comment}
+    //         </div>`
+    // })
+    // return c
+    console.log(comments)
+}
+ 

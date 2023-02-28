@@ -45,9 +45,13 @@
         <p name="article" class="article"> <%- article %> </p>
     </div>
 
+    <div class="comments">
+        <%- comments %>
+    </div>
+
     <div id="respond">
 
-        <h3>Leave a Comment</h3>
+        <h4>Leave a Comment</h4>
       
         <form action="/post_comment" method="post" id="commentform">
       
@@ -60,7 +64,7 @@
           <label for="comment" class="required">Your message</label>
           <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
       
-          <input type="hidden" name="comment_post_ID" value="1" id="comment_post_ID" />
+          <input type="hidden" name="blogId" value="<%-docName %>" id="blogId" />
           <input name="submit" type="submit" class="btn" value="Submit comment" />
       
         </form>
