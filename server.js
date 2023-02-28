@@ -70,7 +70,12 @@ app.get('/editor', (req, res) => {
 })
 
 app.get('/upload', (req, res) => {
-    res.sendFile(path.join(initial_path, "uploads/editor.html"))
+    res.render("editor")
+    // res.sendFile(path.join(initial_path, "uploads/editor.html"))
+})
+
+app.get('/blog', (req, res) => {
+    res.render("blog")
 })
 
 app.listen("3000", () => {
@@ -96,6 +101,8 @@ app.post('/upload', (req, res) => {
     // setting up docName
     let docName = `${blogTitle}-${id}`;
     let date = new Date(); // for published at info
+
+    const average = (Number(food_rating) + Number(saftey_rating) + Number(cost_rating) + Number(accessibility_rating)) / 4
     
     const blog_post = {
         docName: docName,
@@ -106,6 +113,7 @@ app.post('/upload', (req, res) => {
         saftey_rating: saftey_rating,
         cost_rating: cost_rating,
         accessibility_rating: accessibility_rating,
+        average_rating: average,
         article: article,
         author: author,
         bannerImage: banner_path,
@@ -128,7 +136,7 @@ app.post('/upload', (req, res) => {
         }
     }
     // addBlogPostToDB().catch(console.error);
-    res.sendFile(path.join(initial_path, "uploads/blog.html"))
+    res.render("blog", blog_post)
 
 })
 

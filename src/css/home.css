@@ -35,3 +35,7 @@ body{
     /* padding-top: 10px; */
     /* margin-top: 1em; */
 }
+
+footer {
+    height: 6em;
+}

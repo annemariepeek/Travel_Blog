@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel</title>
+
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/editor.css">
+    <link rel="stylesheet" href="../css/blog.css">
+
+    <!-- <script defer src="../js/blog.js" ></script> -->
+
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/"><img src="../img/logo.png" class="logo" alt="" style></a>
+        <ul class="links-container">
+            <li class="link-item"><a href="/" class="link">home</a></li>
+        </ul>
+    </nav>
+
+    <img src="<%- bannerImage %>" class="banner" id="banner-upload">
+
+    <!-- <div class="banner">
+        <img src="<%- bannerImage %>" class="banner" id="banner-upload">
+    </div> -->
+    
+    <div class="blog">
+        <h1 class="title"> <%- title %> </h1> <br>
+        <p class="author"> <%- author %> , <%- publishedAt %> </p> <br>
+
+        <p class="place_visited"> <%- place %> </p>
+  
+        <div class="ratings">
+            Food: <%- food_rating %> <br>
+            Safety: <%- saftey_rating %> <br>
+            Cost: <%- cost_rating %> <br>
+            Accessibility: <%- accessibility_rating %> <br>
+            
+            Average rating: <%- average_rating %>
+        </div>
+        
+        <p name="article" class="article"> <%- article %> </p>
+    </div>
+
+    <div id="respond">
+
+        <h3>Leave a Comment</h3>
+      
+        <form action="/post_comment" method="post" id="commentform">
+      
+          <label for="comment_author" class="required">Your name</label>
+          <input type="text" name="comment_author" id="comment_author" value="" tabindex="1" required="required">
+      
+          <label for="email" class="required">Your email</label>
+          <input type="email" name="email" id="email" value="" tabindex="2" required="required">
+      
+          <label for="comment" class="required">Your message</label>
+          <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
+      
+          <input type="hidden" name="comment_post_ID" value="1" id="comment_post_ID" />
+          <input name="submit" type="submit" class="btn" value="Submit comment" />
+      
+        </form>
+      
+    </div>
+
+    <footer class="footer">
+    </footer>
+
+</body>
+</html>
