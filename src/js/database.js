@@ -10,7 +10,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-// export { databaseAndCollection, client }
+// export { db, client }
 // // Import the functions you need from the SDKs you need
 // import { initializeApp } from "firebase/app";
 // // const initializeApp = require('firebase/app')
