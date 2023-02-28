@@ -3,6 +3,26 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require("body-parser");
 const fileupload = require('express-fileupload');
+process.stdin.setEncoding("utf8");
+let initial_path = path.join(__dirname, "src");
+
+require("dotenv").config({ path: path.resolve(__dirname, 'credentialsDontPost/.env') }) 
+
+const app = express()
+app.use(express.static(initial_path));
+app.use(fileupload());
+app.use(bodyParser.urlencoded({extended:false}));
+
+
+// const userName = process.env.MONGO_DB_USERNAME;
+// const password = process.env.MONGO_DB_PASSWORD;
+
+// const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
+// const { MongoClient, ServerApiVersion } = require('mongodb');
+// const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
+// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+const { db, client } = require("./src/js/database")
 
 // import * as path from 'path';
 // import * as express from 'express';
@@ -10,26 +30,26 @@ const fileupload = require('express-fileupload');
 
 // import { fileURLToPath } from 'url';
 
-// const __filename = fileURLToPath(import.meta.url);
+// const __filenamenpm = fileURLToPath(import.meta.url);
 
 // const __dirname = path.dirname(__filename);
 
 
-process.stdin.setEncoding("utf8");
-
-let initial_path = path.join(__dirname, "public");
-
-const app = express()
-app.use(express.static(initial_path));
-app.use(fileupload());
 
 
-app.get('/', (request, response) => {
-    response.sendFile(path.join(initial_path, "uploads/home.html"))
+
+
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(initial_path, "uploads/home.html"))
 })
 
-app.get('/editor', (request, response) => {
-    response.sendFile(path.join(initial_path, "uploads/editor.html"))
+app.get('/editor', (req, res) => {
+    res.sendFile(path.join(initial_path, "uploads/editor.html"))
 })
 
 app.listen("3000", () => {
@@ -38,12 +58,61 @@ app.listen("3000", () => {
 
 // upload link
 app.post('/upload', (req, res) => {
+    console.log("in upload endpoint")
+    const {
+        banner, title, country, place, food_rating, saftey_rating, 
+        cost_rating, accessibility_rating, author, article
+    } = req.body
+
+    console.log(title, author, food_rating, country, banner)
+    
+
+    let letters = 'abcdefghijklmnopqrstuvwxyz';
+    let blogTitle = title.split(" ").join("-");
+    let id = '';
+    for(let i = 0; i < 4; i++){
+        id += letters[Math.floor(Math.random() * letters.length)];
+    }
+    // setting up docName
+    let docName = `${blogTitle}-${id}`;
+    let date = new Date(); // for published at info
+    
+    const blog_post = {
+        docName: docName,
+        title: title,
+        article: article,
+        author: author,
+        bannerImage: banner,
+        publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
+        comments: {}
+    }
+
+    async function addBlogPostToDB() {
+        try {
+            await client.connect();
+           
+            // add blog post to DB
+            await client.db(db.db).collection(db.collection).insertOne(blog_post);
+    
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await client.close();
+        }
+    }
+    addBlogPostToDB().catch(console.error);
+    res.render("Blog Post Successfully submitted")
+
+})
+
+app.post("/upload_image", (req, res) => {
     let file = req.files.image;
     let date = new Date();
+
     // image name
     let imagename = date.getDate() + date.getTime() + file.name;
     // image upload path
-    let path = 'public/uploads/' + imagename;
+    let path = 'src/images/' + imagename;
 
     // create upload
     file.mv(path, (err, result) => {
@@ -51,7 +120,11 @@ app.post('/upload', (req, res) => {
             throw err;
         } else{
             // our image upload path
-            res.json(`uploads/${imagename}`)
+            res.json(`images/${imagename}`)
         }
     })
 })
+
+
+// new approach 
+
