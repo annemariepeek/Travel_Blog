@@ -15,7 +15,7 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="/"><img src="../img/logo.png" class="logo" alt="" style></a>
+        <img src="../img/logo.png" class="logo" alt="">
         <ul class="links-container">
             <li class="link-item"><a href="/" class="link">home</a></li>
         </ul>
@@ -64,7 +64,8 @@
           <label for="comment" class="required">Your message</label>
           <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
       
-          <input type="hidden" name="blogId" value="<%-docName %>" id="blogId" />
+          <!-- <input type="hidden" name="blogId" value="<%- docName %>" id="blogId" /> -->
+          <textarea type="hidden" name="blogId" id="blogId" hidden><%- docName %></textarea>
           <input name="submit" type="submit" class="btn" value="Submit comment" />
       
         </form>

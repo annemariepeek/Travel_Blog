@@ -15,8 +15,8 @@ const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECT
 // const { LexModelBuildingService } = require("aws-sdk");
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
+// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri)
 
 const app = express()
 app.use(express.static(initial_path));
@@ -61,7 +61,38 @@ const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 
 app.get('/', (req, res) => {
     // res.sendFile(path.join(initial_path, "templates/home.ejs"))
-    res.render("home")
+    s = ``
+
+    async function buildHomePage() {
+        try {
+            await client.connect();
+            
+            const result = await client.db(db.db).collection(db.collection).find().toArray()
+            for (r in result) {
+
+                result.forEach(function(post) {
+                    const { bannerImage, title, article, docName } = post
+
+                    s += `<div class="blog-card">
+                    <img src="${bannerImage}" class="blog-image" alt="">
+                    <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
+                    <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
+                    <a href="/blog/${docName}" class="btn dark">read</a>
+                    </div>`
+                    
+            })}
+
+            console.log(s)
+            res.render("home", {posts: s})
+            
+        } catch (e) {
+            console.log(`error in iterating over db`);
+        } 
+        finally {
+            await client.close();
+        }
+        
+    }buildHomePage().catch(console.error);
 })
 
 app.get('/editor', (req, res) => {
@@ -74,9 +105,50 @@ app.get('/upload', (req, res) => {
     // res.sendFile(path.join(initial_path, "uploads/editor.html"))
 })
 
-// app.get('/blog', (req, res) => {
+// app.get('/blog/:blogId', (req, res) => {
 //     res.render("blog")
-// })
+// }) // when refresh should pull up same blog
+
+app.get("/blog/:blogId", (req, res) => {
+    const blogId = req.params.blogId
+
+    const {
+        docName: docName,
+        title: title,
+        country: country,
+        place: place,
+        food_rating: food_rating,
+        saftey_rating: saftey_rating,
+        cost_rating: cost_rating,
+        accessibility_rating: accessibility_rating,
+        average_rating: average,
+        article: article,
+        author: author,
+        bannerImage: banner_path,
+        publishedAt: publishedAt,
+        comments: comments
+    } = getBlogById(blogId)
+
+    const formatted_comments = format_comments(comments)
+
+    const blog_post = {
+        docName: docName,
+        title: title,
+        country: country,
+        place: place,
+        food_rating: food_rating,
+        saftey_rating: saftey_rating,
+        cost_rating: cost_rating,
+        accessibility_rating: accessibility_rating,
+        average_rating: average,
+        article: article,
+        author: author,
+        bannerImage: banner_path,
+        publishedAt: publishedAt,
+        comments: formatted_comments
+    }
+    res.render("blog", blog_post)
+})
 
 app.listen("3000", () => {
     console.log('listening.....')
@@ -120,7 +192,7 @@ app.post('/upload', (req, res) => {
         publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
         comments: []
     }
-    console.log(blog_post)
+    // console.log(blog_post)
 
     async function addBlogPostToDB() {
         try {
@@ -140,33 +212,6 @@ app.post('/upload', (req, res) => {
 
 })
 
-app.get("/blog/:blogId", (req, res) => {
-    const blogId = request.params.blogId
-
-    const {
-        docName: docName,
-        title: title,
-        article: article,
-        author: author,
-        bannerImage: banner_path,
-        publishedAt: publishedAt,
-        comments: comments
-    } = getBlogById(blogId)
-
-    const formated_comments = format_comments(comments)
-
-    const blog_post = {
-        docName: docName,
-        title: title,
-        article: article,
-        author: author,
-        bannerImage: banner_path,
-        publishedAt: publishedAt,
-        comments: formated_comments
-    }
-    res.render("blog", blog_post)
-})
-
 app.post("/post_comment", (req, res) => {
     const {
         comment_author, email, comment, blogId
@@ -180,6 +225,8 @@ app.post("/post_comment", (req, res) => {
         comment: comment
     }
 
+    // console.log(`get blog by id: ${blogId}`)
+
     async function addComment() {
         try {
             await client.connect();
@@ -188,7 +235,7 @@ app.post("/post_comment", (req, res) => {
                                 .collection(db.collection)
                                 .updateOne(
                                     { docName: blogId },
-                                    { $push: new_comment }
+                                    { $push: { comments: new_comment }}
                                 )
         
            if (result) {
@@ -205,7 +252,7 @@ app.post("/post_comment", (req, res) => {
     addComment().catch(console.error);
 
     const post = getBlogById(blogId)
-    console.log(post)
+    // console.log(post)
 
     const {
         docName: docName,
@@ -265,6 +312,40 @@ app.post("/upload_image", (req, res) => {
     })
 })
 
+async function buildHomePage() {
+
+    console.log("iterating over db")
+    s = ``
+
+    try {
+
+        await client.connect();
+        
+        const result = await client.db(db.db).collection(db.collection).find().toArray()
+        for (r in result) {
+
+            result.forEach(function(post) {
+                const { bannerImage, title, article, docName } = post
+
+                s += `<div class="blog-card">
+                <img src="${bannerImage}" class="blog-image" alt="">
+                <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
+                <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
+                <a href="/${docName}" class="btn dark">read</a>
+                </div>`
+                
+        })}
+
+        return s
+          
+    } catch (e) {
+        console.log(`error in iterating over db`);
+    } 
+    finally {
+        await client.close();
+    }
+}
+
 
 async function getBlogById(blogId) {
     async function lookUpBlog() {
@@ -272,15 +353,16 @@ async function getBlogById(blogId) {
         try {
             await client.connect();
                     
-            let filter = { docName: blogId };
+            console.log(blogId)
+
             const result = await client.db(db.db)
                                 .collection(db.collection)
-                                .findOne(filter);
+                                .findOne({ docName: blogId });
         
            if (result) {
                return result;
            } else {
-               console.log(`error in get blog by id}`);
+               console.log(`error in get blog by id`);
            }
                     
         } catch (e) {
@@ -289,6 +371,7 @@ async function getBlogById(blogId) {
             await client.close();
         }
     }
+    // console.log("call lookup")
     lookUpBlog().catch(console.error);
 
 }
@@ -309,6 +392,6 @@ async function format_comments(comments) {
     //         </div>`
     // })
     // return c
-    console.log(comments)
+    // console.log(comments)
 }
  
