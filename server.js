@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
                     
             })}
 
-            console.log(s)
+            // console.log(s)
             res.render("home", {posts: s})
             
         } catch (e) {
