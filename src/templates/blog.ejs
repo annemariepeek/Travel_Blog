@@ -23,14 +23,9 @@
 
     <img src="<%- bannerImage %>" class="banner" id="banner-upload">
 
-    <!-- <div class="banner">
-        <img src="<%- bannerImage %>" class="banner" id="banner-upload">
-    </div> -->
-    
     <div class="blog">
-        <h1 class="title"> <%- title %> </h1> <br>
-        <p class="author"> <%- author %> , <%- publishedAt %> </p> <br>
-
+        <h1 class="title"> <%- title %> </h1>
+        <p class="author"> <%- author %>, <%- publishedAt %> </p>
         <p class="place_visited"> <%- place %> </p>
   
         <div class="ratings">
@@ -41,11 +36,11 @@
             
             Average rating: <%- average_rating %>
         </div>
-        
         <p name="article" class="article"> <%- article %> </p>
     </div>
 
     <div class="comments">
+        <h4>Comments</h4> <br>
         <%- comments %>
     </div>
 
@@ -53,7 +48,7 @@
 
         <h4>Leave a Comment</h4>
       
-        <form action="/post_comment" method="post" id="commentform">
+        <form  action="/post_comment" method="post" id="commentform">
       
           <label for="comment_author" class="required">Your name</label>
           <input type="text" name="comment_author" id="comment_author" value="" tabindex="1" required="required">
@@ -64,8 +59,8 @@
           <label for="comment" class="required">Your message</label>
           <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
       
-          <!-- <input type="hidden" name="blogId" value="<%- docName %>" id="blogId" /> -->
-          <textarea type="hidden" name="blogId" id="blogId" hidden><%- docName %></textarea>
+          <input type="hidden" name="blogId" value="<%- docName %>" id="blogId" />
+          <!-- <textarea type="hidden" name="blogId" id="blogId"><%- docName %></textarea> -->
           <input name="submit" type="submit" class="btn" value="Submit comment" />
       
         </form>
@@ -74,6 +69,13 @@
 
     <footer class="footer">
     </footer>
+
+    <!-- <script>
+        onsubmit="postComment()"
+        function postComment() {
+            document.getElementById("blogId").value = docName
+        }
+    </script> -->
 
 </body>
 </html>

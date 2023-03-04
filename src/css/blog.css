@@ -1,7 +1,7 @@
 .blog, .article{
     position: relative;
     height: fit-content;
-    padding-bottom: 0;
+    padding-bottom: 40px;
 }
 
 .article, .title{
@@ -48,7 +48,7 @@
 .comments, #respond {
     width: 70vw;
     min-width: 400px;
-    height: 26em;
+    height: fit-content;
     display: block;
     margin: auto;
     padding: 20px 20px;
@@ -60,7 +60,11 @@
     background-color:  rgb(241,241,241);
     background-size: cover;
 }
-  
+
+.single_comment {
+    padding: 10px;
+}
+
 #respond input[type='text'],
 #respond input[type='email'],
 #respond textarea {

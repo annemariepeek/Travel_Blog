@@ -12,10 +12,8 @@ const userName = process.env.MONGO_DB_USERNAME;
 const password = process.env.MONGO_DB_PASSWORD;
 
 const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
-// const { LexModelBuildingService } = require("aws-sdk");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient } = require('mongodb');
 const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
-// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 const client = new MongoClient(uri)
 
 const app = express()
@@ -25,144 +23,90 @@ app.set("views", path.resolve(__dirname, "src/templates"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended:false}));
 
-
-// const userName = process.env.MONGO_DB_USERNAME;
-// const password = process.env.MONGO_DB_PASSWORD;
-
-// const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
-// const { MongoClient, ServerApiVersion } = require('mongodb');
-// const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`;
-// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
-// const db = require("./src/js/database")
-// const client = require("./src/js/database")
-
-// import { db, client } from "./src/js/database"
-
-// import * as path from 'path';
-// import * as express from 'express';
-// import * as fileupload from 'express-fileupload';
-
-// import { fileURLToPath } from 'url';
-
-// const __filenamenpm = fileURLToPath(import.meta.url);
-
-// const __dirname = path.dirname(__filename);
-
-
-
-
-
-
-
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-
-
 app.get('/', (req, res) => {
-    // res.sendFile(path.join(initial_path, "templates/home.ejs"))
     s = ``
-
     async function buildHomePage() {
         try {
             await client.connect();
             
             const result = await client.db(db.db).collection(db.collection).find().toArray()
-            for (r in result) {
 
-                result.forEach(function(post) {
-                    const { bannerImage, title, article, docName } = post
+            result.forEach(function(post) {
+                const { bannerImage, title, article, docName } = post
 
-                    s += `<div class="blog-card">
-                    <img src="${bannerImage}" class="blog-image" alt="">
-                    <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
-                    <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
-                    <a href="/blog/${docName}" class="btn dark">read</a>
-                    </div>`
+                s += `<div class="blog-card">
+                <img src="${bannerImage}" class="blog-image" alt="">
+                <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
+                <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
+                <a href="/blog/?id=${docName}" class="btn dark">read</a>
+                </div>`
                     
-            })}
-
-            // console.log(s)
+            })
             res.render("home", {posts: s})
-            
+
         } catch (e) {
             console.log(`error in iterating over db`);
         } 
         finally {
             await client.close();
         }
-        
     }buildHomePage().catch(console.error);
 })
 
 app.get('/editor', (req, res) => {
     res.render("editor")
-    // res.sendFile(path.join(initial_path, "uploads/editor.html"))
 })
 
-app.get('/upload', (req, res) => {
-    res.render("editor")
-    // res.sendFile(path.join(initial_path, "uploads/editor.html"))
-})
+app.get('/temp/delete', (req, res) => {
+    async function removeAllApplications() {
+        
+        try {
+            await client.connect();
+            const result = await client.db(db.db)
+            .collection(db.collection)
+            .deleteMany({});
 
-// app.get('/blog/:blogId', (req, res) => {
-//     res.render("blog")
-// }) // when refresh should pull up same blog
+            res.render("editor")
 
-app.get("/blog/:blogId", (req, res) => {
-    const blogId = req.params.blogId
-
-    const {
-        docName: docName,
-        title: title,
-        country: country,
-        place: place,
-        food_rating: food_rating,
-        saftey_rating: saftey_rating,
-        cost_rating: cost_rating,
-        accessibility_rating: accessibility_rating,
-        average_rating: average,
-        article: article,
-        author: author,
-        bannerImage: banner_path,
-        publishedAt: publishedAt,
-        comments: comments
-    } = getBlogById(blogId)
-
-    const formatted_comments = format_comments(comments)
-
-    const blog_post = {
-        docName: docName,
-        title: title,
-        country: country,
-        place: place,
-        food_rating: food_rating,
-        saftey_rating: saftey_rating,
-        cost_rating: cost_rating,
-        accessibility_rating: accessibility_rating,
-        average_rating: average,
-        article: article,
-        author: author,
-        bannerImage: banner_path,
-        publishedAt: publishedAt,
-        comments: formatted_comments
+        } catch (e) {
+            console.error(e);
+        } finally {
+            await client.close();
+        }
     }
-    res.render("blog", blog_post)
+    removeAllApplications().catch(console.error);
 })
 
-app.listen("3000", () => {
-    console.log('listening.....')
+app.get("/blog/", (req, res) => {
+    async function getBlog() {
+
+        const blogId = req.query.id
+
+        try {
+            // retrieve blog post from db
+            const post  = await getBlogById(blogId)
+
+            // create formatted comments string
+            post.comments = await format_comments(post.comments)
+            console.log(post.comments)
+            res.render("blog", post)
+            
+        } catch (e) {
+            console.log("error retrieving blog post");
+        }   
+    }
+    getBlog().catch(console.error);
 })
 
 // upload link
 app.post('/upload', (req, res) => {
-    console.log("in upload endpoint")
+
     const {
         title, country, place, food_rating, saftey_rating, 
         cost_rating, accessibility_rating, author, article, banner_path
     } = req.body
-
-    console.log(banner_path)
     
     let letters = 'abcdefghijklmnopqrstuvwxyz';
     let blogTitle = title.split(" ").join("-");
@@ -175,7 +119,7 @@ app.post('/upload', (req, res) => {
     let date = new Date(); // for published at info
 
     const average = (Number(food_rating) + Number(saftey_rating) + Number(cost_rating) + Number(accessibility_rating)) / 4
-    
+
     const blog_post = {
         docName: docName,
         title: title,
@@ -192,7 +136,6 @@ app.post('/upload', (req, res) => {
         publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
         comments: []
     }
-    // console.log(blog_post)
 
     async function addBlogPostToDB() {
         try {
@@ -200,6 +143,11 @@ app.post('/upload', (req, res) => {
            
             // add blog post to DB
             await client.db(db.db).collection(db.collection).insertOne(blog_post);
+
+            // 301 permanently redirect 
+            res.writeHead(301, {
+                Location: `/blog/?id=${docName}`
+            }).end();
     
         } catch (e) {
             console.error(e);
@@ -208,8 +156,6 @@ app.post('/upload', (req, res) => {
         }
     }
     addBlogPostToDB().catch(console.error);
-    res.render("blog", blog_post)
-
 })
 
 app.post("/post_comment", (req, res) => {
@@ -217,32 +163,29 @@ app.post("/post_comment", (req, res) => {
         comment_author, email, comment, blogId
     } = req.body
 
+    console.log("blog id " + blogId)
+
     const date = new Date()
     const new_comment = {
         comment_author: comment_author,
-        // publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`, 
+        publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`, 
         email: email, 
         comment: comment
     }
-
-    // console.log(`get blog by id: ${blogId}`)
 
     async function addComment() {
         try {
             await client.connect();
                     
-            const result = await client.db(db.db)
-                                .collection(db.collection)
-                                .updateOne(
+            await client.db(db.db).collection(db.collection).updateOne(
                                     { docName: blogId },
-                                    { $push: { comments: new_comment }}
-                                )
-        
-           if (result) {
-               return result;
-           } else {
-               console.log(`error in add comment`);
-           }
+                                    { $push: { comments: new_comment }})
+
+            // 301 permanently redirect 
+            res.writeHead(301, {
+                Location: `/blog/?id=${blogId}`
+            }).end();
+
         } catch (e) {
             console.error(e);
         } finally {
@@ -250,46 +193,6 @@ app.post("/post_comment", (req, res) => {
         }
     }
     addComment().catch(console.error);
-
-    const post = getBlogById(blogId)
-    // console.log(post)
-
-    const {
-        docName: docName,
-        title: title,
-        country: country,
-        place: place,
-        food_rating: food_rating,
-        saftey_rating: saftey_rating,
-        cost_rating: cost_rating,
-        accessibility_rating: accessibility_rating,
-        average_rating: average,
-        article: article,
-        author: author,
-        bannerImage: banner_path,
-        publishedAt: publishedAt,
-        comments: comments
-    } = getBlogById(blogId)
-
-    const formatted_comments = format_comments(comments)
-
-    const blog_post = {
-        docName: docName,
-        title: title,
-        country: country,
-        place: place,
-        food_rating: food_rating,
-        saftey_rating: saftey_rating,
-        cost_rating: cost_rating,
-        accessibility_rating: accessibility_rating,
-        average_rating: average,
-        article: article,
-        author: author,
-        bannerImage: banner_path,
-        publishedAt: publishedAt,
-        comments: formatted_comments
-    }
-    res.render("blog", blog_post)
 })
 
 app.post("/upload_image", (req, res) => {
@@ -335,7 +238,6 @@ async function buildHomePage() {
                 </div>`
                 
         })}
-
         return s
           
     } catch (e) {
@@ -346,52 +248,43 @@ async function buildHomePage() {
     }
 }
 
+app.listen("3000", () => {
+    console.log('listening.....')
+})
 
 async function getBlogById(blogId) {
-    async function lookUpBlog() {
-        
-        try {
-            await client.connect();
-                    
-            console.log(blogId)
+    try {
+        await client.connect();
+        const result = await client.db(db.db)
+                            .collection(db.collection)
+                            .findOne({ docName: blogId })
 
-            const result = await client.db(db.db)
-                                .collection(db.collection)
-                                .findOne({ docName: blogId });
-        
-           if (result) {
-               return result;
-           } else {
-               console.log(`error in get blog by id`);
-           }
-                    
-        } catch (e) {
-            console.error(e);
-        } finally {
-            await client.close();
-        }
+        if (result) {
+            return result
+        } else {
+            console.log(`error in get blog by id`)
+        }    
+    } catch (e) {
+        console.error(e);
+    } finally {
+        await client.close();
     }
-    // console.log("call lookup")
-    lookUpBlog().catch(console.error);
-
 }
 
-
 async function format_comments(comments) {
-    // c = ``
-    
-    // if (comments.length === 0) { c += `Be the first to leave a comment.`}
-    
-    // comments.forEach((c) => {
-    //     const {
-    //         comment_author, comment, publishedAt
-    //     } = c
-    //     c += `<div class="single_comment">
-    //         <h4> ${comment_author} </h4><h6> ${publishedAt} </h6><br>
-    //         ${comment}
-    //         </div>`
-    // })
-    // return c
-    // console.log(comments)
+    str = ``
+    if (comments.length === 0) { str += `Be the first to leave a comment.`}
+    comments.forEach((c) => {
+        const {
+            comment_author, comment, publishedAt
+        } = c
+
+        str += `<div class="single_comment">
+            <h4> ${comment_author} </h4>
+            <h6> ${publishedAt} </h6>
+            ${comment}
+            </div>`
+    })
+    return str
 }
  
