@@ -90,7 +90,6 @@ app.get("/blog/", (req, res) => {
 
             // create formatted comments string
             post.comments = await format_comments(post.comments)
-            console.log(post.comments)
             res.render("blog", post)
             
         } catch (e) {
@@ -165,12 +164,24 @@ app.post("/post_comment", (req, res) => {
 
     console.log("blog id " + blogId)
 
+    let letters = 'abcdefghijklmnopqrstuvwxyz';
+    let commentTitle = comment_author.split(" ").join("-");
+    let id = '';
+    for(let i = 0; i < 4; i++){
+        id += letters[Math.floor(Math.random() * letters.length)];
+    }
+    // setting up docName
+    let comment_id = `${commentTitle}-${id}`;
+    console.log("new comment id: " + comment_id)
+
     const date = new Date()
     const new_comment = {
+        comment_id: comment_id,
         comment_author: comment_author,
-        publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`, 
+        publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`, 
         email: email, 
-        comment: comment
+        comment: comment,
+        likes: 0
     }
 
     async function addComment() {
@@ -193,6 +204,14 @@ app.post("/post_comment", (req, res) => {
         }
     }
     addComment().catch(console.error);
+})
+
+app.post('/upvote_comment', (req, res) => {
+    const {blogId, commentId} = req.body
+    console.log(blogId )
+    console.log(commentId)
+
+
 })
 
 app.post("/upload_image", (req, res) => {
@@ -234,7 +253,7 @@ async function buildHomePage() {
                 <img src="${bannerImage}" class="blog-image" alt="">
                 <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
                 <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
-                <a href="/${docName}" class="btn dark">read</a>
+                <a href="/${docName}" class="btn dark">read</a> 
                 </div>`
                 
         })}
@@ -276,14 +295,22 @@ async function format_comments(comments) {
     if (comments.length === 0) { str += `Be the first to leave a comment.`}
     comments.forEach((c) => {
         const {
-            comment_author, comment, publishedAt
+            comment_id, comment_author, comment, publishedAt
         } = c
 
+
         str += `<div class="single_comment">
-            <h4> ${comment_author} </h4>
+            <h4 class="comment_author"> ${comment_author} </h4>
             <h6> ${publishedAt} </h6>
             ${comment}
-            </div>`
+            ${comment_id}
+            <br>
+            <h7 name="likes" id="likes"></h7> 
+            <button onclick="upvote()" id="likes_btn" class="likes_btn"><img src="../img/thumbsup.png" alt="like comment"></button>
+            <button id="reply_btn" class='reply'>Reply</button>
+            <input type="hidden" id="commentId" value="${comment_id}"/>
+            </div>
+            <hr>`
     })
     return str
 }

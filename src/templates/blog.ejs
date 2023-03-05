@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel</title>
+    <title>Blog</title>
 
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/editor.css">
     <link rel="stylesheet" href="../css/blog.css">
 
-    <!-- <script defer src="../js/blog.js" ></script> -->
+    <script defer src="../js/blog.js" ></script>
 
 </head>
 <body>
@@ -42,6 +42,7 @@
     <div class="comments">
         <h4>Comments</h4> <br>
         <%- comments %>
+        <!-- <button onclick="upvote()" id="likes_btn2" class="likes_btn2"><img src="../img/thumbsup.png" alt="like comment"></button> -->
     </div>
 
     <div id="respond">
@@ -60,7 +61,6 @@
           <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
       
           <input type="hidden" name="blogId" value="<%- docName %>" id="blogId" />
-          <!-- <textarea type="hidden" name="blogId" id="blogId"><%- docName %></textarea> -->
           <input name="submit" type="submit" class="btn" value="Submit comment" />
       
         </form>
@@ -69,13 +69,6 @@
 
     <footer class="footer">
     </footer>
-
-    <!-- <script>
-        onsubmit="postComment()"
-        function postComment() {
-            document.getElementById("blogId").value = docName
-        }
-    </script> -->
 
 </body>
 </html>
