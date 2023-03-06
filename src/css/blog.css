@@ -1,5 +1,5 @@
 body {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .blog, .article{
@@ -58,7 +58,7 @@ body {
     display: block;
     margin: auto;
     padding: 10px 20px;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: auto;
 
     /* box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); */
@@ -115,7 +115,7 @@ hr {
     margin-bottom: 10px;
     display: block;
     width: 100%;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     padding: 10px;
 
     border: 1px solid rgba(0, 0, 0, 0.1);
