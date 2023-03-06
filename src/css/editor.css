@@ -74,7 +74,8 @@ textarea::-webkit-scrollbar-thumb{
 }
 
 .select-country,
-.ratings{
+.ratings
+{
     width: 100%;
     overflow: auto;
     /* min-height: 20px; */
@@ -86,7 +87,7 @@ textarea::-webkit-scrollbar-thumb{
     resize: none;
     border: none;
     padding-top: 30px;
-    /* margin-left: 5px; */
+    margin-left: 10px;
     border-radius: 10px;
 }
 

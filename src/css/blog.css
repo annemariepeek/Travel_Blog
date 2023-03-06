@@ -1,33 +1,39 @@
+body {
+    font-family: 'Lato', sans-serif;
+}
+
 .blog, .article{
     position: relative;
     height: fit-content;
+    padding-top: 40px;
+    padding-left: 10px;
     padding-bottom: 40px;
 }
 
-/* .article, .title{
-    min-height: auto;
-    height: fit-content;
+.article, .title{
+    /* min-height: auto; */
+    /* height: fit-content; */
     padding: 0 10px;
     white-space: normal;
-} */
+}
 
-/* .author, .published{
-    margin: 20px 0 60px;
+.author, .published ,
+.place_visited{
+    /* margin: 20px 0 60px; */
     padding: 0 10px;
     text-transform: capitalize;
-    font-style: italic;
     color: rgba(0, 0, 0, 0.5);
-} */
+}
 
-/* .author, .published span{
+.author span{
     font-weight: 700;
-    font-style: normal;
-} */
+    /* font-style: normal; */
+}
 
-/* .article *{
-    margin: 30px 0;
+.article *{
+    /* margin: 30px 0; */
     color: #2d2d2d;
-} */
+}
 
 .article-image{
     max-width: 100%;
@@ -37,15 +43,15 @@
     object-fit: contain;
 }
 
-.sub-heading{
+/* .sub-heading{
     padding: 0 5vw;
     color: #2d2d2d;
     font-weight: 500;
     font-size: 40px;
     margin-top: 80px;
-}
+} */
 
-.comments, #respond {
+.comments, .respond {
     width: 70vw;
     min-width: 400px;
     height: fit-content;
@@ -65,39 +71,52 @@ hr {
     border-top: 1px blue
 }
 
-.single_comment {
-    padding: 20px;
+#single_comment {
+    padding: 10px;
 }
 
-.comment_author {
+.comment_author,
+#publishedAt,
+.leave_comment {
+    padding-bottom: 5px;
+}
+.comment_likes,
+#publishedAt {
+    padding-top: 10px;
     padding-bottom: 5px;
 }
 
-/* .likes_btn{
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-} */
+.likes_btn{
+    margin: 5px;
+    background: none;
+    outline: none;
+    border: none;
+    /* position: absolute; */
+    /* bottom: 20px;
+    right: 20px; */
+    /* width: 40px; */
+    /* height: 40px; */
+    /* border-radius: 50%; */
+    /* background: rgba(0, 0, 0, 0.1); */
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* cursor: pointer; */
+}
 
 .likes_btn img{
     width: 20px;
 }
 
-#respond input[type='text'],
-#respond input[type='email'],
-#respond textarea {
+.respond input[type='text'],
+.respond input[type='email'],
+.respond textarea {
    
     margin-bottom: 10px;
     display: block;
     width: 100%;
+    font-family: 'Lato', sans-serif;
+    padding: 10px;
 
     border: 1px solid rgba(0, 0, 0, 0.1);
     -webkit-border-radius: 5px;
