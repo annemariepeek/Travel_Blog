@@ -7,13 +7,15 @@ process.stdin.setEncoding("utf8")
 let initial_path = path.join(__dirname, "src")
 
 // db config
-require("dotenv").config({ path: path.resolve(__dirname, 'credentialsDontPost/.env') }) 
-const userName = process.env.MONGO_DB_USERNAME
-const password = process.env.MONGO_DB_PASSWORD
-const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION}
-const { MongoClient } = require('mongodb')
-const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`
-const client = new MongoClient(uri)
+// require("dotenv").config({ path: path.resolve(__dirname, 'credentialsDontPost/.env') }) 
+// const userName = process.env.MONGO_DB_USERNAME
+// const password = process.env.MONGO_DB_PASSWORD
+// // const db = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION}
+// const { MongoClient } = require('mongodb')
+// const uri = `mongodb+srv://${userName}:${password}@cluster0.tyfa3jx.mongodb.net/?retryWrites=true&w=majority`
+// const client = new MongoClient(uri)
+
+const { db , client } = require('./db')
 
 const app = express()
 app.use(express.static(initial_path))
@@ -30,7 +32,9 @@ app.get('/', (req, res) => {
     async function buildHomePage() {
         try {
             await client.connect()
-            const result = await client.db(db.db).collection(db.collection).find().toArray()
+            const result = await db.find().toArray()
+            // const result = await client.db(db.db).collection(db.collection).find().toArray()
+
 
             result.forEach(function(post) {
                 const { bannerImage, title, article, docName } = post
@@ -60,7 +64,8 @@ app.get('/country/', (req, res) => {
         try {
             await client.connect()
             
-            const result = await client.db(db.db).collection(db.collection).find({country : country}).toArray()
+            // const result = await client.db(db.db).collection(db.collection).find({country : country}).toArray()
+            const result = await db.find({country : country}).toArray()
 
             result.forEach(function(post) {
                 const { bannerImage, title, article, docName } = post
@@ -93,9 +98,7 @@ app.get('/temp/delete', (req, res) => {
         
         try {
             await client.connect()
-            const result = await client.db(db.db)
-            .collection(db.collection)
-            .deleteMany({})
+            await db.deleteMany({})
 
             res.render("editor")
 
@@ -114,12 +117,13 @@ app.get("/blog/", (req, res) => {
         const blogId = req.query.id
 
         try {
+            console.log("in get")
             // retrieve blog post from db
             const post  = await getBlogById(blogId)
-
+            console.log("get blog ")
             post.article = await formatArticle(post.article)
             post.comments = await formatComments(post.comments)
-            // console.log(post.comments)
+
             res.render("blog", post)
             
         } catch (e) {
@@ -171,7 +175,7 @@ app.post('/upload', (req, res) => {
             await client.connect()
            
             // add blog post to DB
-            await client.db(db.db).collection(db.collection).insertOne(blog_post)
+            await db.insertOne(blog_post)
 
             // 301 permanently redirect 
             res.writeHead(301, {
@@ -215,9 +219,7 @@ app.post("/post_comment", (req,res) => {
         try {
             await client.connect()
                     
-            await client.db(db.db).collection(db.collection).updateOne(
-                                    { docName: blogId },
-                                    { $push: { comments: new_comment }})
+            await db.updateOne({ docName: blogId },{ $push: { comments: new_comment }})
 
             // 301 permanently redirect 
             res.writeHead(301, {
@@ -313,10 +315,9 @@ app.listen("3000", () => {
 
 async function getBlogById(blogId) {
     try {
+        console.log("in get blog by id function")
         await client.connect()
-        const result = await client.db(db.db)
-                            .collection(db.collection)
-                            .findOne({ docName: blogId })
+        const result = await db.findOne({ docName: blogId })
 
         if (result) {
             return result
@@ -335,8 +336,7 @@ async function getCommentById(blogId, commentId) {
     try {
         await client.connect()
         
-        const result = await client.db(db.db).collection(db.collection)
-        .aggregate([{$match: { 'comments.comment_id': commentId}} ]).toArray()
+        const result = await db.aggregate([{$match: { 'comments.comment_id': commentId}} ]).toArray()
 
         if (result) {
             return result
@@ -355,7 +355,7 @@ async function updateCommentLikes(blogId, commentId, likes) {
     try {
         await client.connect()
 
-        await client.db(db.db).collection(db.collection).updateOne(
+        await db.updateOne(
             {   docName: blogId, 
                 comments: { $elemMatch : { comment_id: commentId}}
             }, { $set : { "comments.$.likes" : likes}})
@@ -428,6 +428,7 @@ async function formatComments(comments) {
             <h7 name="likes" id="likes_${id}">${likes}</h7> 
             <button onclick="like_comment(${id})" id="likes_btn" class="likes_btn"><img src="../img/thumbsup.png" alt="like comment"></button>
             <button onclick="dislike_comment(${id})" id="dislikes_btn" class="likes_btn"><img src="../img/thumbsdown.png" alt="dislike comment"></button>
+            <button onclick="reply(${id})" id="reply_comment" class="reply_comment">Reply</button>
             </div>
             <input type="hidden" id="commentId_${id}" value="${comment_id}"/>
             </div>

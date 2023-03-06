@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // formatArticle()
 }, false)
 
+function reply(id) {
+    
+    
+    
+
+}
+
 function like_comment(id) {
 
     const commentId = document.getElementById(`commentId_${id}`).value

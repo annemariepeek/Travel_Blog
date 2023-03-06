@@ -12,8 +12,8 @@ bannerImage.addEventListener('change', () => {
     uploadImage(bannerImage, "banner")
 })
 
-
 uploadInput.addEventListener('change', () => {
+    console.log("clicked on image")
     uploadImage(uploadInput, "image")
 })
 
@@ -30,6 +30,7 @@ const uploadImage = (uploadFile, uploadType) => {
         .then(data => {
             console.log(data)
             if(uploadType == "image"){
+                console.log("add image to article")
                 addImage(data, file.name)
             } else{
                 // bannerPath = `/${data}`
@@ -56,14 +57,14 @@ const addImage = (imagepath, alt) => {
 
 //Place autocomplete
 function initMap() {
-    var map = new google.maps.Map(document.getElementById('map'), {
+    const map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -33.8688, lng: 151.2195},
     zoom: 13
     })
-    var input = document.getElementById('searchInput')
+    const input = document.getElementById('searchInput')
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input)
 
-    var autocomplete = new google.maps.places.Autocomplete(input,  {
+    const autocomplete = new google.maps.places.Autocomplete(input,  {
         types: ['geocode'],
         componentRestrictions: {
          country: ["THA", "KHM", "IDN", "VNM"]
@@ -71,8 +72,8 @@ function initMap() {
        })
     autocomplete.bindTo('bounds', map)
 
-    var infowindow = new google.maps.InfoWindow()
-    var marker = new google.maps.Marker({
+    const infowindow = new google.maps.InfoWindow()
+    const marker = new google.maps.Marker({
         map: map,
         anchorPoint: new google.maps.Point(0, -29)
     })
@@ -80,6 +81,6 @@ function initMap() {
     autocomplete.addListener('place_changed', function() {
         infowindow.close()
         marker.setVisible(false)
-        var place = autocomplete.getPlace()
+        const place = autocomplete.getPlace()
     })
 }
