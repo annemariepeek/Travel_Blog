@@ -30,7 +30,6 @@ app.get('/', (req, res) => {
     async function buildHomePage() {
         try {
             await client.connect()
-            
             const result = await client.db(db.db).collection(db.collection).find().toArray()
 
             result.forEach(function(post) {
@@ -41,8 +40,7 @@ app.get('/', (req, res) => {
                 <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
                 <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
                 <a href="/blog/?id=${docName}" class="btn dark">read</a>
-                </div>`
-                    
+                </div>`     
             })
             res.render("home", {posts: s})
 
@@ -84,8 +82,6 @@ app.get('/country/', (req, res) => {
             await client.close()
         }
     }buildHomePage().catch(console.error)
-
-
 })
 
 app.get('/editor', (req, res) => {
@@ -121,7 +117,8 @@ app.get("/blog/", (req, res) => {
             // retrieve blog post from db
             const post  = await getBlogById(blogId)
 
-            post.comments = await format_comments(post.comments)
+            post.article = await formatArticle(post.article)
+            post.comments = await formatComments(post.comments)
             // console.log(post.comments)
             res.render("blog", post)
             
@@ -310,39 +307,6 @@ app.post("/upload_image", (req, res) => {
     })
 })
 
-// async function buildHomePage() {
-
-//     console.log("iterating over db")
-//     s = ``
-
-//     try {
-
-//         await client.connect();
-        
-//         const result = await client.db(db.db).collection(db.collection).find().toArray()
-//         for (r in result) {
-
-//             result.forEach(function(post) {
-//                 const { bannerImage, title, article, docName } = post
-
-//                 s += `<div class="blog-card">
-//                 <img src="${bannerImage}" class="blog-image" alt="">
-//                 <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
-//                 <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
-//                 <a href="/${docName}" class="btn dark">read</a> 
-//                 </div>`
-                
-//         })}
-//         return s
-          
-//     } catch (e) {
-//         console.log(`error in iterating over db`);
-//     } 
-//     finally {
-//         await client.close();
-//     }
-// }
-
 app.listen("3000", () => {
     console.log('listening.....')
 })
@@ -403,7 +367,49 @@ async function updateCommentLikes(blogId, commentId, likes) {
     }
 }
 
-async function format_comments(comments) {
+async function formatArticle(article) {
+    str = ``
+    
+    const data = article.split("\n").filter(item => item.length)
+    // console.log(data)
+
+    data.forEach(item => {
+        // check for heading
+        if(item[0] == '#'){
+            let hCount = 0
+            let i = 0
+            while(item[i] == '#'){
+                hCount++
+                i++
+            }
+            let tag = `h${hCount}`
+            str += `<${tag}>${item.slice(hCount, item.length)}</${tag}>`
+        } 
+        //checking for image format
+        else if(item[0] == "!" && item[1] == "["){
+            seperator = 0
+
+            console.log(item[item.length - 1])
+            for(let i = 0; i <= item.length; i++){
+                if(item[i] == "]" && item[i + 1] == "(" && item[item.length - 2] == ")"){
+                    seperator = i
+                    console.log(i)
+                }
+            }
+            console.log(seperator)
+            let alt = item.slice(2, seperator)
+            let src = item.slice(seperator + 2, item.length - 2)
+            console.log(src)
+            str += `<img src="../${src}" alt="${alt}" class="article-image">`
+        }
+        else{
+            str += `<p>${item}</p>`
+        }
+    })
+    return str
+}
+
+async function formatComments(comments) {
     str = ``
     id = 0
     if (comments.length === 0) { str += `Be the first to leave a comment.`}

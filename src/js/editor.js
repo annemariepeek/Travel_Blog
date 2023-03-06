@@ -1,3 +1,4 @@
+const article = document.querySelector('.article')
 
 // banner
 const bannerImage = document.querySelector('#banner-upload')
@@ -5,18 +6,16 @@ const banner_path = document.querySelector('#banner_path')
 const banner = document.querySelector(".banner")
 let bannerPath
 
-// const publishBtn = document.querySelector('.publish-btn')
 const uploadInput = document.querySelector('#image-upload')
 
 bannerImage.addEventListener('change', () => {
     uploadImage(bannerImage, "banner")
 })
 
-if (uploadInput) {
-    uploadInput.addEventListener('change', () => {
-        uploadImage(uploadInput, "image")
-    })
-}
+
+uploadInput.addEventListener('change', () => {
+    uploadImage(uploadInput, "image")
+})
 
 const uploadImage = (uploadFile, uploadType) => {
     const [file] = uploadFile.files
@@ -29,6 +28,7 @@ const uploadImage = (uploadFile, uploadType) => {
             body: formdata
         }).then(res => res.json())
         .then(data => {
+            console.log(data)
             if(uploadType == "image"){
                 addImage(data, file.name)
             } else{
@@ -43,10 +43,12 @@ const uploadImage = (uploadFile, uploadType) => {
 }
 
 const addImage = (imagepath, alt) => {
-    let curPos = articleField.selectionStart
+    let curPos = article.selectionStart
     let textToInsert = `\r![${alt}](${imagepath})\r`
-    articleField.value = articleField.value.slice(0, curPos) + textToInsert + articleField.value.slice(curPos)
+    article.innerHTML = article.value.slice(0, curPos) + textToInsert + article.value.slice(curPos)
+    console.log("hello")
 }
+
 
 
 //Place autocomplete
