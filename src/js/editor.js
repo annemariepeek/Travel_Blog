@@ -32,10 +32,10 @@ const uploadImage = (uploadFile, uploadType) => {
             if(uploadType == "image"){
                 addImage(data, file.name)
             } else{
-                bannerPath = `/${data}`
-                // bannerPath = `${location.origin}/${data}`
+                // bannerPath = `/${data}`
+                bannerPath = `${location.origin}/${data}`
 
-                console.log(bannerPath)
+                // console.log(bannerPath)
                 banner.style.backgroundImage = `url("${bannerPath}")`
                 document.getElementById('banner_path').value = bannerPath
             }
