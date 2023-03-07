@@ -16,6 +16,7 @@ let initial_path = path.join(__dirname, "src")
 // const client = new MongoClient(uri)
 
 const { db , client } = require('./db')
+const console = require("console")
 
 const app = express()
 app.use(express.static(initial_path))
@@ -122,6 +123,7 @@ app.get("/blog/", (req, res) => {
             const post  = await getBlogById(blogId)
             console.log("get blog ")
             post.article = await formatArticle(post.article)
+            console.log("article formatted")
             post.comments = await formatComments(post.comments)
 
             res.render("blog", post)
@@ -212,7 +214,8 @@ app.post("/post_comment", (req,res) => {
         publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`, 
         email: email, 
         comment: comment,
-        likes: Number(0)
+        likes: Number(0),
+        replies: []
     }
 
     async function addComment() {
@@ -233,6 +236,55 @@ app.post("/post_comment", (req,res) => {
         }
     }
     addComment().catch(console.error)
+})
+
+app.post("/post_reply", (req,res) => {
+    const {
+        reply_author, email, reply, blogId, commentId
+    } = req.body
+
+    let letters = 'abcdefghijklmnopqrstuvwxyz'
+    let replyTitle = reply_author.split(" ").join("-")
+    let id = ''
+    for(let i = 0; i < 4; i++){
+        id += letters[Math.floor(Math.random() * letters.length)]
+    }
+    // setting up docName
+    let comment_id = `${replyTitle}-${id}`
+
+    const date = new Date()
+    const new_reply = {
+        comment_id: comment_id,
+        reply_author: reply_author,
+        reply_publishedAt: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`, 
+        email: email, 
+        reply: reply,
+        likes: Number(0)
+    }
+
+    async function addReply() {
+        try {
+            await client.connect()
+                    
+            const result = await db.updateOne(
+                {   docName: blogId, 
+                    comments: { $elemMatch : { comment_id: commentId}}
+                }, { $push : { "comments.$.replies" : new_reply}})
+            
+            console.log(result)
+
+            // 301 permanently redirect 
+            res.writeHead(301, {
+                Location: `/blog/?id=${blogId}`
+            }).end()
+
+        } catch (e) {
+            console.error(e)
+        } finally {
+            await client.close()
+        }
+    }
+    addReply().catch(console.error)
 })
 
 app.post('/like_comment', (req, res) => {
@@ -412,27 +464,52 @@ async function formatArticle(article) {
 async function formatComments(comments) {
     str = ``
     id = 0
-    if (comments.length === 0) { str += `Be the first to leave a comment.`}
+    if (comments.length === 0) { 
+        str += `Be the first to leave a comment.`
+    }
+    
+    
     comments.forEach((c) => {
         const {
-            comment_id, comment_author, comment, publishedAt, likes
+            comment_id, comment_author, comment, publishedAt, likes, replies
         } = c
 
-
         str += `<div class="single_comment${id}" id="single_comment">
-            <h4 class="comment_author"> ${comment_author} </h4>
+            <h3 class="comment_author"> ${comment_author} </h3>
             <h5 id="publishedAt"> ${publishedAt} </h5>
-            ${comment}
+            <div class="comment">${comment} </div>
             <br>
             <div class="comment_likes">
             <h7 name="likes" id="likes_${id}">${likes}</h7> 
-            <button onclick="like_comment(${id})" id="likes_btn" class="likes_btn"><img src="../img/thumbsup.png" alt="like comment"></button>
-            <button onclick="dislike_comment(${id})" id="dislikes_btn" class="likes_btn"><img src="../img/thumbsdown.png" alt="dislike comment"></button>
-            <button onclick="reply(${id})" id="reply_comment" class="reply_comment">Reply</button>
+            <button onclick="like_comment(${id})" id="likes_btn" class="likes_btn"><img src="../img/thumbsup1.png" alt="like comment"></button>
+            <button onclick="dislike_comment(${id})" id="dislikes_btn" class="likes_btn"><img src="../img/thumbsdown1.png" alt="dislike comment"></button>
+            <button onclick="reply(${id})" id="reply_btn" class="reply_btn">Reply</button>
+            <p name="comment_reply" id="comment_reply_${id}"><p>
             </div>
             <input type="hidden" id="commentId_${id}" value="${comment_id}"/>
-            </div>
-            <hr>`
+            
+            <br>
+            <hr>
+            
+            <div class="comment_replies">`
+
+        // iterate over comment replies
+        replies.forEach((r) => {
+            const {
+                reply_author, reply, reply_publishedAt, reply_likes, 
+            } = r
+
+            str += `<div class="single_reply" id="single_reply">
+            <h3 class="comment_author"> ${reply_author} </h3>
+            <h5 id="publishedAt"> ${reply_publishedAt} </h5>
+            <div class="reply"> ${reply} </div>
+            <br>
+            <hr>
+            </div> `
+            
+        })
+        str += `</div></div>`
+
         id += 1
     })
     return str

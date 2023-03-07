@@ -12,8 +12,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
+    
     <script defer src="../js/blog.js" ></script>
-    <!-- <script defer src="../js/editor.js" ></script> -->
 
 </head>
 <body>
@@ -52,9 +52,8 @@
     </div>
 
     <div class="comments">
-        <h4>Comments</h4> <br>
+        <h2>Comments</h2><br><hr><br>
         <div id="comments"><%- comments %></div>
-        <!-- <button onclick="upvote()" id="likes_btn2" class="likes_btn2"><img src="../img/thumbsup.png" alt="like comment"></button> -->
     </div>
 
     <div class="respond">
@@ -72,8 +71,8 @@
           <label for="comment" class="required">Message</label>
           <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
       
-          <input type="hidden" name="blogId" value="<%- docName %>" id="blogId" />
-          <input name="submit" type="submit" class="btn" value="Submit comment" />
+          <input type="hidden" name="blogId" value="<%- docName %>" id="blogId"/>
+          <input name="submit" type="submit" class="btn" value="Submit comment"/>
       
         </form>
       

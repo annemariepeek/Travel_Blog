@@ -11,8 +11,6 @@ body {
 }
 
 .article, .title{
-    /* min-height: auto; */
-    /* height: fit-content; */
     padding: 0 10px;
     white-space: normal;
 }
@@ -31,7 +29,6 @@ body {
 }
 
 .article *{
-    /* margin: 30px 0; */
     color: #2d2d2d;
 }
 
@@ -51,66 +48,66 @@ body {
     margin-top: 80px;
 } */
 
-.comments, .respond {
+.comments,
+.respond {
     width: 70vw;
     min-width: 400px;
     height: fit-content;
     display: block;
     margin: auto;
-    padding: 10px 20px;
+    padding: 10px ;
     font-family: 'Montserrat', sans-serif;
     margin-bottom: auto;
-
-    /* box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); */
-    /* border-radius: 10px; */
-    /* background-color:  rgb(241,241,241); */
-    /* background-size: cover; */
 }
  
-hr {
-    border-top: 1px blue
+
+.comment,
+.reply {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-#single_comment {
-    padding: 10px;
+
+.comment_replies {
+    padding: 20px;
+    
 }
 
 .comment_author,
+.reply_author {
+    font-weight:200;
+    color: teal;
+}
+
 #publishedAt,
 .leave_comment {
     padding-bottom: 5px;
 }
-.comment_likes,
+
 #publishedAt {
-    padding-top: 10px;
+    padding-top: 5px;
     padding-bottom: 5px;
 }
 
-.likes_btn{
+.likes_btn,
+.reply_btn {
     margin: 5px;
     background: none;
     outline: none;
     border: none;
-    /* position: absolute; */
-    /* bottom: 20px;
-    right: 20px; */
-    /* width: 40px; */
-    /* height: 40px; */
-    /* border-radius: 50%; */
-    /* background: rgba(0, 0, 0, 0.1); */
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* cursor: pointer; */
+    font-family: 'Montserrat', sans-serif;
 }
 
 .likes_btn img{
-    width: 20px;
+    width: 25px;
 }
 
 .respond input[type='text'],
 .respond input[type='email'],
-.respond textarea {
+.respond textarea,
+.replyform input[type='text'],
+.replyform input[type='email'],
+.replyform textarea {
    
     margin-bottom: 10px;
     display: block;
@@ -128,5 +125,14 @@ hr {
     line-height: 1.4em;
 }
 
+.replyform {
+    width : 50%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    
+}
 
+.replyform textarea {
+    height: 150px;
+}
 

@@ -8,10 +8,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // formatArticle()
 }, false)
 
+
 function reply(id) {
     
-    
-    
+    const reply_field = document.getElementById(`comment_reply_${id}`)
+    const commentId = document.getElementById(`commentId_${id}`).value
+    console.log(commentId)
+
+    s = `<div class=replyform>
+    <form  action="/post_reply" method="post" id="replyform">
+      
+    <label for="reply_author" class="required">Name</label>
+    <input type="text" name="reply_author" id="reply_author" value="" tabindex="1" required="required">
+
+    <label for="email" class="required">Email</label>
+    <input type="email" name="email" id="email" value="" tabindex="2" required="required">
+
+    <label for="reply" class="required">Message</label>
+    <textarea name="reply" id="reply" rows="10" tabindex="4"  required="required"></textarea>
+
+    <input type="hidden" name="blogId" value="${blogId}" id="blogId" />
+    <input type="hidden" name="commentId" value="${commentId}" id="commentId" />
+    <input name="submit" type="submit" class="btn" value="Submit reply" />
+
+    </form>
+    </div>`
+    reply_field.innerHTML = s
 
 }
 
