@@ -125,6 +125,22 @@ body{
     -webkit-text-stroke: 2px #fff;
 }
 
+#rating_val {
+    padding: 20px;
+    padding-top: 30px;
+    display:inline-flex;
+  
+    color: teal;
+    
+    
+}
+#country_rating{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-size: 200%;
+}
+
 .btn{
     padding: 10px 20px;
     border-radius: 10px;
@@ -132,6 +148,21 @@ body{
     color: #000;
     text-decoration: none;
     text-transform: capitalize;
+}
+
+.blog-card {
+    padding: 20px;
+    border-style: solid;
+    /* border-color:#1b1b1b; */
+    border-color: rgba(0,0,0,0.12);
+    border-radius: 10px;
+    /* border-style: none; */
+    /* box-shadow: 1px 2px; */
+    box-shadow: 0 1px 1px rgba(0,0,0,0.12), 
+              0 2px 2px rgba(0,0,0,0.12), 
+              0 4px 4px rgba(0,0,0,0.12), 
+              0 8px 8px rgba(0,0,0,0.12),
+              0 16px 16px rgba(0,0,0,0.12);
 }
 
 .blogs-section{

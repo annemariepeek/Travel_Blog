@@ -17,6 +17,7 @@ let initial_path = path.join(__dirname, "src")
 
 const { db , client } = require('./db')
 const console = require("console")
+const { resourceLimits } = require("worker_threads")
 
 const app = express()
 app.use(express.static(initial_path))
@@ -64,12 +65,21 @@ app.get('/country/', (req, res) => {
     async function buildHomePage() {
         try {
             await client.connect()
+
+            let saftey_total = 0
+            let cost_total = 0
+            let food_total = 0
+            let accessibility_total = 0
+            let average_total = 0
             
-            // const result = await client.db(db.db).collection(db.collection).find({country : country}).toArray()
             const result = await db.find({country : country}).toArray()
 
             result.forEach(function(post) {
-                const { bannerImage, title, article, docName } = post
+                const { bannerImage, title, article, docName, food_rating, 
+                    saftey_rating, cost_rating, accessibility_rating, average_rating 
+                } = post
+
+                console.log(food_rating)
 
                 s += `<div class="blog-card">
                 <img src="${bannerImage}" class="blog-image" alt="">
@@ -77,16 +87,43 @@ app.get('/country/', (req, res) => {
                 <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
                 <a href="/blog/?id=${docName}" class="btn dark">read</a>
                 </div>`
-                    
+
+                saftey_total += saftey_rating
+                cost_total += cost_rating
+                food_total += food_rating
+                accessibility_total += accessibility_rating
+                average_total += average_rating
             })
-            res.render("home", {posts: s})
+
+        
+            const num_blogs = result.length
+
+            if (num_blogs === 0) {
+                r = `<span id=rating_val> No blog posts for ${country} yet </span>`
+            } else {
+                const average = average_total / num_blogs
+                const saftey = saftey_total / num_blogs
+                const food = food_total / num_blogs
+                const cost = cost_total / num_blogs
+                const accessibility = accessibility_total / num_blogs
+                
+
+                
+                r = `<p> <span id=rating_val> Saftey :</span> ${saftey}
+                <span id=rating_val> Food :</span> ${food}  
+                <span id=rating_val> Cost :</span> ${cost}
+                <span id=rating_val> Accessibility :</span> ${accessibility }
+                <span id=rating_val> Country Average :</span> ${average} </p> `
+            }
+            
+
+            res.render("country", {posts: s, rating: r, country: country})
 
         } catch (e) {
             console.log(`error in iterating over db`)
         } 
         finally {
-            await client.close()
-        }
+            await client.close()        }
     }buildHomePage().catch(console.error)
 })
 
@@ -160,10 +197,10 @@ app.post('/upload', (req, res) => {
         title: title,
         country: country,
         place: place,
-        food_rating: food_rating,
-        saftey_rating: saftey_rating,
-        cost_rating: cost_rating,
-        accessibility_rating: accessibility_rating,
+        food_rating: Number(food_rating),
+        saftey_rating: Number(saftey_rating),
+        cost_rating: Number(cost_rating),
+        accessibility_rating: Number(accessibility_rating),
         average_rating: average,
         article: article,
         author: author,
