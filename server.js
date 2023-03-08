@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 
                 s += `<div class="blog-card">
                 <img src="${bannerImage}" class="blog-image" alt="">
-                <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
+                <h1 class="blog-title">${title.substring(0, 100)}</h1>
                 <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
                 <a href="/blog/?id=${docName}" class="btn dark">read</a>
                 </div>`     
@@ -79,11 +79,9 @@ app.get('/country/', (req, res) => {
                     saftey_rating, cost_rating, accessibility_rating, average_rating 
                 } = post
 
-                console.log(food_rating)
-
                 s += `<div class="blog-card">
                 <img src="${bannerImage}" class="blog-image" alt="">
-                <h1 class="blog-title">${title.substring(0, 100) + '...'}</h1>
+                <h1 class="blog-title">${title.substring(0, 100)}</h1>
                 <p class="blog-overview">${article.substring(0, 200) + '...'}</p>
                 <a href="/blog/?id=${docName}" class="btn dark">read</a>
                 </div>`
@@ -101,11 +99,11 @@ app.get('/country/', (req, res) => {
             if (num_blogs === 0) {
                 r = `<span id=rating_val> No blog posts for ${country} yet </span>`
             } else {
-                const average = average_total / num_blogs
-                const saftey = saftey_total / num_blogs
-                const food = food_total / num_blogs
-                const cost = cost_total / num_blogs
-                const accessibility = accessibility_total / num_blogs
+                const average = (average_total / num_blogs).toFixed(1)
+                const saftey = (saftey_total / num_blogs).toFixed(1)
+                const food = (food_total / num_blogs).toFixed(1)
+                const cost = (cost_total / num_blogs).toFixed(1)
+                const accessibility = (accessibility_total / num_blogs).toFixed(1)
                 
 
                 
@@ -155,12 +153,9 @@ app.get("/blog/", (req, res) => {
         const blogId = req.query.id
 
         try {
-            console.log("in get")
             // retrieve blog post from db
             const post  = await getBlogById(blogId)
-            console.log("get blog ")
-            post.article = await formatArticle(post.article)
-            console.log("article formatted")
+            // post.article = await formatArticle(post.article)
             post.comments = await formatComments(post.comments)
 
             res.render("blog", post)
@@ -308,8 +303,6 @@ app.post("/post_reply", (req,res) => {
                     comments: { $elemMatch : { comment_id: commentId}}
                 }, { $push : { "comments.$.replies" : new_reply}})
             
-            console.log(result)
-
             // 301 permanently redirect 
             res.writeHead(301, {
                 Location: `/blog/?id=${blogId}`
@@ -404,7 +397,6 @@ app.listen("3000", () => {
 
 async function getBlogById(blogId) {
     try {
-        console.log("in get blog by id function")
         await client.connect()
         const result = await db.findOne({ docName: blogId })
 
@@ -456,47 +448,47 @@ async function updateCommentLikes(blogId, commentId, likes) {
     }
 }
 
-async function formatArticle(article) {
-    str = ``
+// async function formatArticle(article) {
+//     str = ``
     
-    const data = article.split("\n").filter(item => item.length)
-    // console.log(data)
+//     const data = article.split("\n").filter(item => item.length)
+//     // console.log(data)
 
-    data.forEach(item => {
-        // check for heading
-        if(item[0] == '#'){
-            let hCount = 0
-            let i = 0
-            while(item[i] == '#'){
-                hCount++
-                i++
-            }
-            let tag = `h${hCount}`
-            str += `<${tag}>${item.slice(hCount, item.length)}</${tag}>`
-        } 
-        //checking for image format
-        else if(item[0] == "!" && item[1] == "["){
-            seperator = 0
+//     data.forEach(item => {
+//         // check for heading
+//         if(item[0] == '#'){
+//             let hCount = 0
+//             let i = 0
+//             while(item[i] == '#'){
+//                 hCount++
+//                 i++
+//             }
+//             let tag = `h${hCount}`
+//             str += `<${tag}>${item.slice(hCount, item.length)}</${tag}>`
+//         } 
+//         //checking for image format
+//         else if(item[0] == "!" && item[1] == "["){
+//             seperator = 0
 
-            console.log(item[item.length - 1])
-            for(let i = 0; i <= item.length; i++){
-                if(item[i] == "]" && item[i + 1] == "(" && item[item.length - 2] == ")"){
-                    seperator = i
-                    console.log(i)
-                }
-            }
-            console.log(seperator)
-            let alt = item.slice(2, seperator)
-            let src = item.slice(seperator + 2, item.length - 2)
-            console.log(src)
-            str += `<img src="../${src}" alt="${alt}" class="article-image">`
-        }
-        else{
-            str += `<p>${item}</p>`
-        }
-    })
-    return str
-}
+//             console.log(item[item.length - 1])
+//             for(let i = 0; i <= item.length; i++){
+//                 if(item[i] == "]" && item[i + 1] == "(" && item[item.length - 2] == ")"){
+//                     seperator = i
+//                     console.log(i)
+//                 }
+//             }
+//             console.log(seperator)
+//             let alt = item.slice(2, seperator)
+//             let src = item.slice(seperator + 2, item.length - 2)
+//             console.log(src)
+//             str += `<img src="../${src}" alt="${alt}" class="article-image">`
+//         }
+//         else{
+//             str += `<p>${item}</p>`
+//         }
+//     })
+//     return str
+// }
 
 async function formatComments(comments) {
     str = ``

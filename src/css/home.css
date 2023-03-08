@@ -107,11 +107,12 @@ body{
 }
 
 .heading{
-    color: #fff;
+    color: teal;
     text-transform: capitalize;
     font-size: 80px;
     line-height: 60px;
     margin-bottom: 80px;
+
 }
 
 .heading .small{
@@ -126,7 +127,7 @@ body{
 }
 
 #rating_val {
-    padding: 20px;
+    padding: 10px;
     padding-top: 30px;
     display:inline-flex;
   

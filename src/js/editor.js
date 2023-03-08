@@ -1,4 +1,4 @@
-const article = document.querySelector('.article')
+const article = document.getElementById('article')
 
 // banner
 const bannerImage = document.querySelector('#banner-upload')
@@ -6,16 +6,16 @@ const banner_path = document.querySelector('#banner_path')
 const banner = document.querySelector(".banner")
 let bannerPath
 
-const uploadInput = document.querySelector('#image-upload')
+// const uploadInput = document.querySelector('#image-upload')
 
 bannerImage.addEventListener('change', () => {
     uploadImage(bannerImage, "banner")
 })
 
-uploadInput.addEventListener('change', () => {
-    console.log("clicked on image")
-    uploadImage(uploadInput, "image")
-})
+// uploadInput.addEventListener('change', () => {
+//     console.log("clicked on image")
+//     uploadImage(uploadInput, "image")
+// })
 
 const uploadImage = (uploadFile, uploadType) => {
     const [file] = uploadFile.files
@@ -28,15 +28,10 @@ const uploadImage = (uploadFile, uploadType) => {
             body: formdata
         }).then(res => res.json())
         .then(data => {
-            console.log(data)
             if(uploadType == "image"){
-                console.log("add image to article")
                 addImage(data, file.name)
             } else{
-                // bannerPath = `/${data}`
                 bannerPath = `${location.origin}/${data}`
-
-                // console.log(bannerPath)
                 banner.style.backgroundImage = `url("${bannerPath}")`
                 document.getElementById('banner_path').value = bannerPath
             }
@@ -50,10 +45,7 @@ const addImage = (imagepath, alt) => {
     let curPos = article.selectionStart
     let textToInsert = `\r![${alt}](${imagepath})\r`
     article.innerHTML = article.value.slice(0, curPos) + textToInsert + article.value.slice(curPos)
-    console.log("hello")
 }
-
-
 
 //Place autocomplete
 function initMap() {

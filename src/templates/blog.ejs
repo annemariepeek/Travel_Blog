@@ -40,43 +40,45 @@
         <p class="author"> <%- author %>, <%- publishedAt %> </p>
         <p class="place_visited"> <%- place %> </p>
   
-        <div class="ratings">
-            Food: <%- food_rating %> <br>
-            Safety: <%- saftey_rating %> <br>
-            Cost: <%- cost_rating %> <br>
-            Accessibility: <%- accessibility_rating %> <br>
-            
-            Average rating: <%- average_rating %>
+        <div class="place_rating">
+            <p> <span id=rating_val> Saftey :</span> <%- saftey_rating %>
+                <span id=rating_val> Food :</span> <%- food_rating %>
+                <span id=rating_val> Cost :</span>  <%- cost_rating %>
+                <span id=rating_val> Accessibility :</span> <%- accessibility_rating %>
+                <span id=rating_val> Average :</span> <%- average_rating %>
+            </p> 
         </div>
         <div name="article" class="article" id="article"> <%- article %> </div>
     </div>
 
-    <div class="comments">
-        <h2>Comments</h2><br><hr><br>
-        <div id="comments"><%- comments %></div>
-    </div>
+    <div class="discussion">
+        <div class="comments">
+            <h2>Comments</h2><br><hr><br>
+            <div id="comments"><%- comments %></div>
+        </div>
 
-    <div class="respond">
+        <div class="respond">
 
-        <h4 class="leave_comment">Leave a Comment</h4>
-      
-        <form  action="/post_comment" method="post" id="commentform">
-      
-          <label for="comment_author" class="required">Name</label>
-          <input type="text" name="comment_author" id="comment_author" value="" tabindex="1" required="required">
-      
-          <label for="email" class="required">Email</label>
-          <input type="email" name="email" id="email" value="" tabindex="2" required="required">
-      
-          <label for="comment" class="required">Message</label>
-          <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
-      
-          <input type="hidden" name="blogId" value="<%- docName %>" id="blogId"/>
-          <input name="submit" type="submit" class="btn" value="Submit comment"/>
-      
-        </form>
-      
-    </div>
+            <h4 class="leave_comment">Leave a Comment</h4>
+        
+            <form  action="/post_comment" method="post" id="commentform">
+        
+            <label for="comment_author" class="required">Name</label>
+            <input type="text" name="comment_author" id="comment_author" value="" tabindex="1" required="required">
+        
+            <label for="email" class="required">Email</label>
+            <input type="email" name="email" id="email" value="" tabindex="2" required="required">
+        
+            <label for="comment" class="required">Message</label>
+            <textarea name="comment" id="comment" rows="10" tabindex="4"  required="required"></textarea>
+        
+            <input type="hidden" name="blogId" value="<%- docName %>" id="blogId"/>
+            <input name="submit" type="submit" class="btn" value="Submit comment"/>
+        
+            </form>
+        
+        </div>  
+    </div>  
 
     <footer class="footer">
     </footer>

@@ -27,14 +27,14 @@
     <form action="../../upload" method="post">
 
         <div class="banner">
-            <input type="file" name="banner" accept="image/*" id="banner-upload" hidden>
+            <input type="file" name="banner" accept="image/*" id="banner-upload" hidden required>
             <textarea type="text" name="banner_path" id="banner_path" hidden></textarea> 
             <label for="banner-upload" class="banner-upload-btn"><img src="../img/upload.png" alt="upload banner"></label>
         </div>
         
         <div class="blog">
-            <textarea type="text" name="title" class="title" placeholder="Title..."></textarea>
-            <textarea type="text" name="author" class="author"  placeholder="Author"></textarea>
+            <textarea type="text" name="title" class="title" placeholder="Title..." required></textarea>
+            <textarea type="text" name="author" class="author"  placeholder="Author" required></textarea>
 
             <div class="select-country">
                 Select Country:
@@ -45,7 +45,7 @@
                     <option value="Cambodia">Cambodia</option>
                 </select>
                 
-                <input id="searchInput" name="place" class="searchInput" type="text" placeholder="Enter place visited">      
+                <input id="searchInput" name="place" class="searchInput" type="text" placeholder="Enter place visited" required="required">      
                 <div id="map"></div>
             </div>
 
@@ -57,14 +57,14 @@
                 Accessibility: <input type="range" name="accessibility_rating" class="accessibility" min="1" max="10"> <br>
             </div>
             
-            <textarea type="text" name="article" class="article" placeholder="Start writing here..."></textarea>
+            <textarea type="text" name="article" id="article" class="article" placeholder="Start writing here..." required="required"></textarea>
         </div>
 
         <div class="blog-options">
             <!-- <button class="btn dark publish-btn">publish</button> -->
             <input type="submit" class="btn dark publish-btn" value="publish">
             <input type="file" accept="image/*" id="image-upload" hidden>
-            <label for="image-upload" class="btn grey upload-btn">Upload Image</label>
+            <!-- <label for="image-upload" class="btn grey upload-btn">Upload Image</label> -->
         </div>
     </form> 
 
