@@ -185,7 +185,8 @@ app.post('/upload', (req, res) => {
     let docName = `${blogTitle}-${id}`
     let date = new Date() // for published at info
 
-    const average = (Number(food_rating) + Number(saftey_rating) + Number(cost_rating) + Number(accessibility_rating)) / 4
+    const average = (Number(food_rating) + Number(saftey_rating) + 
+                    Number(cost_rating) + Number(accessibility_rating)) / 4
 
     const blog_post = {
         docName: docName,
@@ -448,47 +449,6 @@ async function updateCommentLikes(blogId, commentId, likes) {
     }
 }
 
-// async function formatArticle(article) {
-//     str = ``
-    
-//     const data = article.split("\n").filter(item => item.length)
-//     // console.log(data)
-
-//     data.forEach(item => {
-//         // check for heading
-//         if(item[0] == '#'){
-//             let hCount = 0
-//             let i = 0
-//             while(item[i] == '#'){
-//                 hCount++
-//                 i++
-//             }
-//             let tag = `h${hCount}`
-//             str += `<${tag}>${item.slice(hCount, item.length)}</${tag}>`
-//         } 
-//         //checking for image format
-//         else if(item[0] == "!" && item[1] == "["){
-//             seperator = 0
-
-//             console.log(item[item.length - 1])
-//             for(let i = 0; i <= item.length; i++){
-//                 if(item[i] == "]" && item[i + 1] == "(" && item[item.length - 2] == ")"){
-//                     seperator = i
-//                     console.log(i)
-//                 }
-//             }
-//             console.log(seperator)
-//             let alt = item.slice(2, seperator)
-//             let src = item.slice(seperator + 2, item.length - 2)
-//             console.log(src)
-//             str += `<img src="../${src}" alt="${alt}" class="article-image">`
-//         }
-//         else{
-//             str += `<p>${item}</p>`
-//         }
-//     })
-//     return str
-// }
 
 async function formatComments(comments) {
     str = ``
@@ -543,4 +503,46 @@ async function formatComments(comments) {
     })
     return str
 }
+
+// async function formatArticle(article) {
+//     str = ``
+    
+//     const data = article.split("\n").filter(item => item.length)
+//     // console.log(data)
+
+//     data.forEach(item => {
+//         // check for heading
+//         if(item[0] == '#'){
+//             let hCount = 0
+//             let i = 0
+//             while(item[i] == '#'){
+//                 hCount++
+//                 i++
+//             }
+//             let tag = `h${hCount}`
+//             str += `<${tag}>${item.slice(hCount, item.length)}</${tag}>`
+//         } 
+//         //checking for image format
+//         else if(item[0] == "!" && item[1] == "["){
+//             seperator = 0
+
+//             console.log(item[item.length - 1])
+//             for(let i = 0; i <= item.length; i++){
+//                 if(item[i] == "]" && item[i + 1] == "(" && item[item.length - 2] == ")"){
+//                     seperator = i
+//                     console.log(i)
+//                 }
+//             }
+//             console.log(seperator)
+//             let alt = item.slice(2, seperator)
+//             let src = item.slice(seperator + 2, item.length - 2)
+//             console.log(src)
+//             str += `<img src="../${src}" alt="${alt}" class="article-image">`
+//         }
+//         else{
+//             str += `<p>${item}</p>`
+//         }
+//     })
+//     return str
+// }
  
